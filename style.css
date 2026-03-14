@@ -648,3 +648,53 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
     }
 }
 
+/* ── GSAP Vertical Card Stacking ───────────────────────────────────────── */
+
+.scroll-section.vertical-section {
+    overflow: hidden;
+}
+
+/* Wrapper is the pinned 100vh window */
+.scroll-section .wrapper {
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.scroll-section .list {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+/* Both cards sit absolutely inside the wrapper during the animation */
+.card-item {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+    transform-origin: top center;
+}
+
+.hero-cinematic.card-item {
+    background-color: var(--bg-color);
+    z-index: 1;
+}
+
+.about.card-item {
+    background: var(--secondary-color);
+    z-index: 2;
+    border-radius: 24px 24px 0 0 !important;
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6) !important;
+    overflow-y: auto !important;
+}
+
+/* After pin releases: About rejoins normal document flow */
+.about.card-item[style*="position: relative"] {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100vh;
+    transform: none !important;
+}

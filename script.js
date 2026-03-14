@@ -1,4 +1,50 @@
+// ── GSAP Vertical Card Stacking (Hero → About) ──────────────────────────
+gsap.registerPlugin(ScrollTrigger);
+
+window.addEventListener('DOMContentLoaded', () => {
+    const scrollSection = document.querySelector('.scroll-section.vertical-section');
+    if (!scrollSection) return;
+
+    const hero  = scrollSection.querySelector('#home');
+    const about = scrollSection.querySelector('#about');
+    if (!hero || !about) return;
+
+    // About starts hidden below the viewport
+    gsap.set(about, { yPercent: 100 });
+
+    const tl = gsap.timeline({
+        scrollTrigger: {
+            id: 'heroAboutStack',          // ← named so navbar can find it
+            trigger: scrollSection,
+            pin: true,
+            pinSpacing: true,
+            start: 'top top',
+            end: '+=100%',
+            scrub: 1,
+            invalidateOnRefresh: true,
+            onLeave: () => {
+                gsap.set(hero,  { clearProps: 'all' });
+                gsap.set(about, { clearProps: 'all' });
+                about.style.position = 'relative';
+                about.style.transform = 'none';
+            },
+            onEnterBack: () => {
+                about.style.position = '';
+                about.style.transform = '';
+                gsap.set(about, { yPercent: 0 });
+                gsap.set(hero,  { scale: 0.88, borderRadius: '20px' });
+            },
+        },
+        defaults: { ease: 'none' },
+    });
+
+    tl.to(hero,  { scale: 0.88, borderRadius: '20px' })
+      .to(about, { yPercent: 0 }, '<');
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
+
     // 3D Profile Card Hover Effect
     const bgText = document.querySelector('.hero-bg-text');
     const floatingHeadWrapper = document.querySelector('.hero-image-wrapper');
@@ -45,14 +91,36 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
-    // Smooth Scroll
+    // Smooth Scroll — GSAP ScrollTo (aware of pinned sections)
+    gsap.registerPlugin(ScrollToPlugin);
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
+            const targetId = this.getAttribute('href');
+            const target   = document.querySelector(targetId);
+            if (!target) return;
+
+            if (targetId === '#about') {
+                // Get the ScrollTrigger instance for the hero→about stack
+                const st = ScrollTrigger.getById('heroAboutStack');
+                if (st) {
+                    // st.end = the exact scroll position where About is fully visible
+                    gsap.to(window, {
+                        duration: 1,
+                        scrollTo: { y: st.end, autoKill: false },
+                        ease: 'power2.inOut',
+                    });
+                    return;
+                }
             }
+
+            // All other sections: scroll normally
+            gsap.to(window, {
+                duration: 1,
+                scrollTo: { y: target, offsetY: 0, autoKill: false },
+                ease: 'power2.inOut',
+            });
         });
     });
 
