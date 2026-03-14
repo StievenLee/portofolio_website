@@ -1,5 +1,34 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Scroll Reveal Animation with Intersection Observer for better performance
+document.addEventListener('DOMContentLoaded', () => {
+    // 3D Profile Card Hover Effect
+    const bgText = document.querySelector('.hero-bg-text');
+    const floatingHeadWrapper = document.querySelector('.hero-image-wrapper');
+    const floatingHeadImg = document.querySelector('.hero-img-floating');
+
+    if (floatingHeadWrapper && floatingHeadImg) {
+        floatingHeadWrapper.addEventListener('mousemove', (e) => {
+            const rect = floatingHeadWrapper.getBoundingClientRect();
+            const x = e.clientX - rect.left; // x position within the element
+            const y = e.clientY - rect.top;  // y position within the element
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = ((y - centerY) / centerY) * -15; // Max rotation 15deg
+            const rotateY = ((x - centerX) / centerX) * 15;
+
+            // Apply 3D rotation to the image
+            floatingHeadImg.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+            floatingHeadImg.style.transition = 'transform 0.1s ease'; // Fast transition for smooth tracking
+        });
+
+        floatingHeadWrapper.addEventListener('mouseleave', () => {
+            // Reset to flat when mouse leaves
+            floatingHeadImg.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            floatingHeadImg.style.transition = 'transform 0.5s ease-out'; // Slower transition for snap back
+        });
+    }
+
+    // Intersection Observer for Scroll Reveals
     const observerOptions = {
         threshold: 0.15
     };
@@ -12,28 +41,75 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }, observerOptions);
 
-    const revealElements = document.querySelectorAll('.reveal, .reveal-text, .hero-image, .project-card');
-    revealElements.forEach(el => observer.observe(el));
-
-  // Smooth Scroll for Nav Links
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", function (e) {
-      e.preventDefault();
-      document.querySelector(this.getAttribute("href")).scrollIntoView({
-        behavior: "smooth",
-      });
+    document.querySelectorAll('.reveal, .project-card').forEach(el => {
+        observer.observe(el);
     });
-  });
 
-  // Simple Form Submission (Log to console)
-  const contactForm = document.querySelector(".contact-form");
-  if (contactForm) {
-    contactForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const formData = new FormData(contactForm);
-      console.log("Form Submitted:", Object.fromEntries(formData));
-      alert("Thank you for your message! (Demo Only)");
-      contactForm.reset();
+    // Smooth Scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
     });
-  }
+
+    // Form Feedback
+    const form = document.querySelector('.contact-form');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = form.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = 'SENT! ✅';
+            setTimeout(() => {
+                btn.innerText = originalText;
+                form.reset();
+            }, 3000);
+        });
+    }
+
+    // Vertical Timeline Scroll Animation
+    const timeline = document.getElementById('experienceTimeline');
+    const timelineProgress = document.getElementById('timelineProgress');
+
+    if (timeline && timelineProgress) {
+        window.addEventListener('scroll', () => {
+            // Get timeline position relative to viewport
+            const rect = timeline.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            
+            // Calculate how far we've scrolled into the timeline
+            // We want the line to start filling when the top of timeline hits middle of screen (or a bit lower)
+            // And finish filling when bottom of timeline hits middle of screen
+            const startTrigger = windowHeight * 0.6; // Start when timeline is 60% down the screen
+            const distance = startTrigger - rect.top;
+            
+            // Calculate percentage (0 to 1)
+            let percentage = distance / rect.height;
+            
+            // Clamp between 0 and 1
+            percentage = Math.max(0, Math.min(1, percentage));
+            
+            // Apply scale
+            timelineProgress.style.transform = `scaleY(${percentage})`;
+            
+            // Optional: Also light up dots as the line passes them
+            const dots = timeline.querySelectorAll('.timeline-dot');
+            dots.forEach(dot => {
+                const dotRect = dot.getBoundingClientRect();
+                // If dot is above the progress line's current visual bottom
+                if (dotRect.top < rect.top + (rect.height * percentage)) {
+                    dot.style.backgroundColor = 'var(--accent-color)';
+                    dot.style.boxShadow = '0 0 20px rgba(0, 255, 204, 0.8)';
+                } else {
+                    dot.style.backgroundColor = 'var(--bg-color)';
+                    dot.style.boxShadow = '0 0 15px rgba(0, 255, 204, 0.5)';
+                }
+            });
+        });
+    }
 });
+
