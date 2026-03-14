@@ -1,6 +1,17 @@
 // ── GSAP Vertical Card Stacking (Hero → About) ──────────────────────────
 gsap.registerPlugin(ScrollTrigger);
 
+// Matikan browser scroll restoration — kita handle sendiri setelah GSAP siap
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
+// Simpan scroll position sebelum page unload
+let savedScrollY = 0;
+window.addEventListener('beforeunload', () => {
+    sessionStorage.setItem('scrollY', window.scrollY);
+});
+
 window.addEventListener('DOMContentLoaded', () => {
     const scrollSection = document.querySelector('.scroll-section.vertical-section');
     if (!scrollSection) return;
@@ -9,12 +20,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const about = scrollSection.querySelector('#about');
     if (!hero || !about) return;
 
-    // About starts hidden below the viewport
+    // Selalu mulai dari yPercent: 100 — state awal yang benar
     gsap.set(about, { yPercent: 100 });
 
     const tl = gsap.timeline({
         scrollTrigger: {
-            id: 'heroAboutStack',          // ← named so navbar can find it
+            id: 'heroAboutStack',
             trigger: scrollSection,
             pin: true,
             pinSpacing: true,
@@ -22,7 +33,13 @@ window.addEventListener('DOMContentLoaded', () => {
             end: '+=100%',
             scrub: 1,
             invalidateOnRefresh: true,
-            onLeave: () => {
+            onLeave: (self) => {
+                // Saat animasi selesai, scroll ke st.end persis seperti klik navbar
+                // Ini memastikan about terlihat dari posisi yang benar (full viewport)
+                gsap.to(window, {
+                    duration: 0,
+                    scrollTo: { y: self.end, autoKill: false },
+                });
                 gsap.set(hero,  { clearProps: 'all' });
                 gsap.set(about, { clearProps: 'all' });
                 about.style.position = 'relative';
@@ -40,6 +57,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
     tl.to(hero,  { scale: 0.88, borderRadius: '20px' })
       .to(about, { yPercent: 0 }, '<');
+
+    // Setelah GSAP selesai kalkulasi semua (pin spacer sudah ada),
+    // restore scroll position yang tersimpan
+    ScrollTrigger.addEventListener('refresh', () => {
+        const saved = parseInt(sessionStorage.getItem('scrollY') || '0', 10);
+        if (saved > 0) {
+            window.scrollTo(0, saved);
+            sessionStorage.removeItem('scrollY');
+        }
+    }, { once: true });
 });
 
 
@@ -180,4 +207,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-

@@ -90,16 +90,22 @@ body {
 }
 
 .hero-bg-text {
-    font-size: 12vw;
+    font-size: clamp(3rem, 12vw, 14rem);
     font-weight: 950;
-    color: var(--accent-color); /* Clearly visible white */
+    color: var(--accent-color);
     position: absolute;
-    top: 0%; /* Higher position as requested */
-    z-index: 1; /* Stays behind the layout-container (z-index: 10) */
+    top: 0%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
     pointer-events: none;
     text-align: center;
     white-space: nowrap;
     text-transform: uppercase;
+    /* Clip overflow inside hero — never show || artifacts */
+    width: 100%;
+    overflow: hidden;
+    text-overflow: clip;
 }
 
 .hero-layout-container {
@@ -287,7 +293,7 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    padding: 3rem 0 1.5rem; /* Reduced padding since height is handled by min-height */
+    padding: 64px 0 3rem;
 }
 .about-grid { 
     display: grid; 
@@ -591,62 +597,212 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
 
 .coming-soon { min-height: 250px; display: flex; align-items: center; justify-content: flex-start;}
 
-/* Responsive Timeline */
+/* Responsive Design */
+/* ── Tablet (max 900px) ─────────────────────────────────────────────────── */
 @media screen and (max-width: 900px) {
-    .timeline::after {
-        left: 31px; /* Move central line to the left */
+
+    /* Hero */
+    .hero-bg-text {
+        font-size: clamp(2.5rem, 13vw, 8rem);
+        top: 3%;
+        width: 100%;
+        overflow: hidden;
     }
 
-    .timeline-progress {
-        left: 31px; /* Match the central line left offset */
+    .hero-layout-container {
+        flex-direction: column;
+        justify-content: center;
+        gap: 2rem;
+        padding: 0 6%;
     }
+
+    .hero-col-left,
+    .hero-col-right {
+        flex: unset;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hero-col-left  { order: 2; }
+    .hero-col-center { order: 1; padding: 0; }
+    .hero-col-right { order: 3; }
+
+    .hero-image-wrapper {
+        width: 45vw;
+        max-width: 240px;
+        min-width: 150px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .hero-description {
+        text-align: center;
+        max-width: 480px;
+        font-size: 0.95rem;
+    }
+
+    .hero-pill-cta {
+        width: auto;
+        padding: 0.8rem 2.5rem;
+    }
+
+    /* About */
+    .about {
+        padding: 3rem 0 2rem;
+        align-items: flex-start;
+        /* Let content grow beyond 100vh — critical for ticker visibility */
+        height: auto !important;
+        min-height: 100vh;
+    }
+
+    .about .container {
+        width: 100%;
+        padding: 0 1.5rem;
+    }
+
+    .about-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        width: 100%;
+    }
+
+    .about-image {
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .about-image img {
+        width: 100%;
+        display: block;
+    }
+
+    .about-content {
+        width: 100%;
+    }
+
+    .stats {
+        gap: 2.5rem;
+    }
+
+    .ticker-wrap {
+        width: 100% !important;
+        overflow: hidden !important;
+        display: flex !important;
+        margin-top: 2rem;
+    }
+
+    /* Timeline */
+    .timeline::after       { left: 31px; }
+    .timeline-progress     { left: 31px; }
 
     .timeline-item {
         width: 100%;
-        padding-left: 70px; /* Space for the line and dot */
+        padding-left: 70px;
         padding-right: 0px;
     }
 
-    .timeline-item.right {
-        left: 0;
-    }
+    .timeline-item.right { left: 0; }
 
-    .timeline-item.left .timeline-dot, .timeline-item.right .timeline-dot {
-        left: 21px; /* Align dots over the left-aligned line */
-    }
+    .timeline-item.left .timeline-dot,
+    .timeline-item.right .timeline-dot { left: 21px; }
 
-    /* Move dates on top of the card content for mobile */
-    .timeline-item.left .timeline-date, .timeline-item.right .timeline-date {
+    .timeline-item.left .timeline-date,
+    .timeline-item.right .timeline-date {
         position: relative;
-        top: auto;
-        left: auto;
-        right: auto;
+        top: auto; left: auto; right: auto;
         text-align: left;
         margin-bottom: 10px;
         color: var(--accent-color);
     }
 
-    /* About Section Responsive */
-    .about-grid {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-    }
-    
-    .about-image {
-        max-width: 400px;
-        margin: 0 auto;
-    }
-
-    /* Project Grid Responsive */
+    /* Projects */
     .project-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 
-    /* Contact Form Responsive */
+    /* Contact */
     .contact-form > div {
         grid-template-columns: 1fr !important;
     }
 }
+
+/* ── Mobile (max 576px) ─────────────────────────────────────────────────── */
+@media screen and (max-width: 576px) {
+
+    /* Hero */
+    .hero-cinematic {
+        padding-top: 64px;
+    }
+
+    .hero-bg-text {
+        font-size: clamp(2rem, 12vw, 5rem);
+        top: 5%;
+        letter-spacing: -1px;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .hero-layout-container {
+        gap: 1rem;
+    }
+
+    .hero-image-wrapper {
+        width: 52vw;
+        max-width: 190px;
+    }
+
+    .hero-description {
+        font-size: 0.82rem;
+        max-width: 280px;
+    }
+
+    .hero-pill-cta {
+        padding: 0.75rem 2rem;
+        font-size: 0.78rem;
+    }
+
+    /* About */
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .about {
+        padding: 2.5rem 0 2rem;
+        height: auto !important;
+    }
+
+    .about .container {
+        padding: 0 1rem;
+    }
+
+    .about-image {
+        max-width: 220px;
+    }
+
+    .about-text p {
+        font-size: 1rem;
+    }
+
+    .stats {
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-item h3 {
+        font-size: 2.2rem;
+    }
+
+    .ticker-wrap {
+        margin-top: 1.5rem;
+        width: 100% !important;
+        overflow: hidden !important;
+    }
+}
+
 
 /* ── GSAP Vertical Card Stacking ───────────────────────────────────────── */
 
@@ -681,6 +837,7 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
 .hero-cinematic.card-item {
     background-color: var(--bg-color);
     z-index: 1;
+    overflow: hidden !important;
 }
 
 .about.card-item {
@@ -688,8 +845,14 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
     z-index: 2;
     border-radius: 24px 24px 0 0 !important;
     box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6) !important;
-    overflow-y: auto !important;
+    padding-top: 64px !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
+
+.about.card-item::-webkit-scrollbar { display: none; }
 
 /* After pin releases: About rejoins normal document flow */
 .about.card-item[style*="position: relative"] {
@@ -697,4 +860,22 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
     height: auto !important;
     min-height: 100vh;
     transform: none !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
 }
+
+/* On tablet/mobile: about card must grow with content */
+@media screen and (max-width: 900px) {
+    .about.card-item {
+        height: auto !important;
+        min-height: 100vh;
+        overflow-y: auto !important;
+    }
+
+    /* Ticker must always clip its own overflow */
+    .ticker-wrap {
+        overflow: hidden !important;
+        max-width: 100%;
+    }
+}
+
