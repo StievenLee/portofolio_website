@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stieven Rossy | Creative Portfolio</title>
     <link rel="stylesheet" href="style.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -25,11 +26,8 @@
     </header>
 
     <main>
-        <div class="scroll-section vertical-section">
-            <div class="wrapper">
-                <div class="list">
-                    
-                    <section id="home" class="hero-cinematic card-item">
+        <div class="hero-about-wrapper">
+        <section id="home" class="hero-cinematic">
                         <!-- GIANT BACKGROUND TEXT -->
                         <h1 class="hero-bg-text">HI, I'M STIEVEN</h1>
 
@@ -61,7 +59,7 @@
                         </div>
                     </section>
 
-                    <section id="about" class="about card-item">
+        <section id="about" class="about">
                         <div class="container">
                             <h2 class="section-title">ABOUT ME</h2>
                             <div class="about-grid">
@@ -157,16 +155,13 @@
                         </div>
                     </section>
 
-                </div>
-            </div>
-        </div>
-        
+        </div><!-- /.hero-about-wrapper -->
 
         <section id="experience" class="experience section-wrapper">
             <div class="exp-bg-blob"></div>
             <div class="container grid-core">
                 <div style="grid-column: 1 / -1; text-align: center; margin-bottom: 3rem;">
-                    <h2 class="section-title">EXPERIENCE</h2>
+                    <h2 class="section-title reveal">EXPERIENCE</h2>
                     <p style="color: rgba(255,255,255,0.6); font-size: 1.1rem; margin-top: -1rem;">My journey in the software industry.</p>
                 </div>
                 
@@ -174,7 +169,7 @@
                     <div class="timeline" id="experienceTimeline">
                         <div class="timeline-progress" id="timelineProgress"></div>
                         <!-- PT. BCA Entry -->
-                        <div class="timeline-item left">
+                        <div class="timeline-item left reveal">
                             <div class="timeline-dot"></div>
                             <div class="timeline-date">August 2024 - Present</div>
                             <div class="timeline-content exp-card">
@@ -198,7 +193,7 @@
                         </div>
 
                         <!-- Placeholder for symmetry -->
-                        <div class="timeline-item right">
+                        <div class="timeline-item right reveal">
                             <div class="timeline-dot"></div>
                             <div class="timeline-date">Future</div>
                             <div class="timeline-content exp-card coming-soon">
@@ -213,9 +208,9 @@
             </div>
         </section>
 
-        <section id="projects" class="projects">
+        <!-- <section id="projects" class="projects">
             <div class="container">
-                <h2 class="section-title">SELECTED WORKS</h2>
+                <h2 class="section-title reveal">SELECTED WORKS</h2>
                 <div class="project-grid">
                     <div class="project-card reveal">
                         <div class="project-img-wrapper">
@@ -251,11 +246,102 @@
                     </div>
                 </div>
             </div>
+        </section> -->
+
+        <section id="projects" class="projects">
+            <div class="container">
+                <h2 class="section-title reveal">SELECTED WORKS</h2>
+
+                <div class="project-list">
+
+                    <!-- ── PROJECT CARD 1 ── -->
+                    <div class="proj-card reveal">
+                        <!-- LEFT: Info -->
+                        <div class="proj-info">
+                            <div class="proj-number">01</div>
+                            <h3 class="proj-title">RadiantVerse</h3>
+
+                            <!-- Framework Badges -->
+                            <div class="proj-badges">
+                                <span class="proj-badge">Laravel</span>
+                                <span class="proj-badge">MySQL</span>
+                                <span class="proj-badge">Tailwind CSS</span>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="proj-desc">
+                                Platform belanja online lengkap dengan sistem autentikasi, manajemen produk, keranjang belanja, dan dashboard admin. Dibangun dengan arsitektur MVC yang bersih dan performa query database yang optimal.
+                            </p>
+
+                            <!-- CTA -->
+                            <a href="#" class="proj-link">
+                                View Project <span class="proj-link-arrow">→</span>
+                            </a>
+                        </div>
+
+                        <!-- RIGHT: 3 Preview Images -->
+                        <div class="proj-images">
+                            <div class="proj-img-main">
+                                <img src="RadiantVerse/Feature-Design.png" alt="RadiantVerse Preview 1">
+                                <div class="proj-img-shine"></div>
+                            </div>
+                            <div class="proj-img-row">
+                                <div class="proj-img-thumb">
+                                    <img src="RadiantVerse/Lobby.png" alt="RadiantVerse Preview 2">
+                                </div>
+                                <div class="proj-img-thumb">
+                                    <img src="RadiantVerse/Achievement.png" alt="RadiantVerse Preview 3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── PROJECT CARD 2 ── -->
+                    <div class="proj-card reveal">
+                        <!-- LEFT: Info -->
+                        <div class="proj-info">
+                            <div class="proj-number">02</div>
+                            <h3 class="proj-title">Fintech Mobile App</h3>
+
+                            <div class="proj-badges">
+                                <span class="proj-badge">Java</span>
+                                <span class="proj-badge">Android</span>
+                                <span class="proj-badge">Firebase</span>
+                            </div>
+
+                            <p class="proj-desc">
+                                Aplikasi mobile untuk pengelolaan keuangan pribadi dengan fitur pencatatan transaksi, visualisasi data pengeluaran, dan notifikasi budget. Menggunakan Firebase Realtime Database untuk sinkronisasi data lintas perangkat.
+                            </p>
+
+                            <a href="#" class="proj-link">
+                                View Project <span class="proj-link-arrow">→</span>
+                            </a>
+                        </div>
+
+                        <!-- RIGHT: 3 Preview Images -->
+                        <div class="proj-images">
+                            <div class="proj-img-main">
+                                <img src="https://placehold.co/600x360/0a0a0a/00ffcc?text=Preview+1" alt="Fintech Preview 1">
+                                <div class="proj-img-shine"></div>
+                            </div>
+                            <div class="proj-img-row">
+                                <div class="proj-img-thumb">
+                                    <img src="https://placehold.co/280x180/111/00ffcc?text=Preview+2" alt="Fintech Preview 2">
+                                </div>
+                                <div class="proj-img-thumb">
+                                    <img src="https://placehold.co/280x180/111/00ffcc?text=Preview+3" alt="Fintech Preview 3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </section>
 
         <section id="contact" class="contact">
             <div class="container">
-                <h2 class="section-title">GET IN TOUCH</h2>
+                <h2 class="section-title reveal">GET IN TOUCH</h2>
                 <div class="contact-wrapper">
                     <form class="contact-form">
                         <input type="text" placeholder="Your Name" required>
@@ -270,12 +356,19 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Creative Portfolio. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#">LinkedIn</a>
-                <a href="#">GitHub</a>
-                <a href="#">Instagram</a>
+            <div class="footer-social">
+                <a href="https://linkedin.com/in/stievenlee" target="_blank" class="footer-social-link" aria-label="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                </a>
+                <a href="https://github.com/stievenlee" target="_blank" class="footer-social-link" aria-label="GitHub">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                </a>
+                <a href="https://instagram.com/stievenlee" target="_blank" class="footer-social-link" aria-label="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                </a>
             </div>
+            <p class="footer-quote">"Code is the canvas, logic is the brush."</p>
+            <p class="footer-copy">&copy; 2026 Stieven Lee. All rights reserved.</p>
         </div>
     </footer>
 

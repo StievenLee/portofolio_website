@@ -1,10 +1,42 @@
 :root {
+    /* ── Core Palette ── */
     --bg-color: #0a0a0a;
+    --bg-deep: #0d0d0d;          /* slightly lighter than bg, used for experience section */
     --text-color: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.55);
+    --text-subtle: rgba(255, 255, 255, 0.08);
     --accent-color: #00ffcc;
+    --accent-secondary: #00ccff; /* used as gradient pair on hero CTA */
     --secondary-color: #1a1a1a;
+    --black: #000000;
+
+    /* ── Glass / Surface ── */
     --glass-bg: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-border-subtle: rgba(255, 255, 255, 0.08);
+    --surface-white-03: rgba(255, 255, 255, 0.03);
+    --surface-white-05: rgba(255, 255, 255, 0.05);
+
+    /* ── Accent tints (for borders, backgrounds, shadows) ── */
+    --accent-glow-sm:  rgba(0, 255, 204, 0.08);
+    --accent-glow-md:  rgba(0, 255, 204, 0.2);
+    --accent-glow-lg:  rgba(0, 255, 204, 0.5);
+    --accent-border-xs: rgba(0, 255, 204, 0.12);
+    --accent-border-sm: rgba(0, 255, 204, 0.2);
+    --accent-border-md: rgba(0, 255, 204, 0.35);
+    --accent-tint-06:  rgba(0, 255, 204, 0.06);
+    --accent-tint-07:  rgba(0, 255, 204, 0.07);
+
+    /* ── Spotlight / Theatrical ── */
+    --spotlight-purple: rgba(230, 200, 255, 0.15);
+    --spotlight-white:  rgba(255, 255, 255, 0.4);
+
+    /* ── Shadows ── */
+    --shadow-black-04: rgba(0, 0, 0, 0.4);
+    --shadow-black-06: rgba(0, 0, 0, 0.6);
+    --shadow-black-08: rgba(0, 0, 0, 0.8);
+
+    /* ── Typography & Transitions ── */
     --font-outfit: 'Outfit', sans-serif;
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -37,9 +69,9 @@ body {
     width: 100%;
     height: 64px; /* Increased from 44px */
     z-index: 1000;
-    background: rgba(10, 10, 10, 0.75);
+    background: color-mix(in srgb, var(--bg-color) 75%, transparent);
     backdrop-filter: saturate(180%) blur(25px); /* Deeper blur */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--glass-border-subtle);
     display: flex;
     justify-content: center;
     transition: var(--transition-smooth);
@@ -64,7 +96,7 @@ body {
 
 .nav-links a {
     text-decoration: none;
-    color: #f5f5f7;
+    color: var(--text-color);
     font-size: 0.95rem; /* Increased from 0.75rem */
     font-weight: 600;
     transition: var(--transition-smooth);
@@ -132,7 +164,7 @@ body {
     line-height: 1.3;
     text-transform: uppercase;
     color: var(--text-color);
-    text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    text-shadow: 0 5px 15px color-mix(in srgb, var(--black) 50%, transparent);
 }
 
 .hero-col-center {
@@ -158,7 +190,7 @@ body {
     aspect-ratio: 4 / 5;
     border-radius: 20px;
     border: 2px solid var(--glass-border);
-    filter: grayscale(100%) drop-shadow(0 0 30px rgba(0, 255, 204, 0.2));
+    filter: grayscale(100%) drop-shadow(0 0 30px var(--accent-border-sm));
     object-fit: cover;
     transition: filter 0.3s ease, transform 0.1s ease; /* Don't transition transform on hover from CSS, let JS handle it */
     cursor: pointer;
@@ -167,7 +199,7 @@ body {
 
 /* Only change filter on hover via CSS, let JS handle the 3D transform */
 .hero-img-floating:hover {
-    filter: grayscale(0%) drop-shadow(0 0 40px rgba(0, 255, 204, 0.6));
+    filter: grayscale(0%) drop-shadow(0 0 40px var(--accent-glow-lg));
 }
 
 /* --- Theatrical Spotlight & Dust --- */
@@ -192,9 +224,9 @@ body {
     background: conic-gradient(
         from 0deg at 50% 0%, 
         transparent 165deg, 
-        rgba(230, 200, 255, 0.15) 174deg, 
-        rgba(255, 255, 255, 0.4) 180deg, 
-        rgba(230, 200, 255, 0.15) 186deg, 
+        var(--spotlight-purple) 174deg, 
+        var(--spotlight-white) 180deg, 
+        var(--spotlight-purple) 186deg, 
         transparent 195deg
     );
     filter: blur(20px); /* Slightly less blur to keep it sharp */
@@ -234,7 +266,7 @@ body {
     background-image: 
         radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px),
         radial-gradient(rgba(200,200,255,0.6) 1.5px, transparent 1.5px),
-        radial-gradient(rgba(255,255,255,0.4) 2px, transparent 2px);
+        radial-gradient(rgba(255,255,255,0.4) 2px, transparent 2px); /* dust: intentional artistic values */
     background-size: 80px 80px, 130px 130px, 180px 180px;
     animation: particlesDrift 30s linear infinite;
     filter: blur(1px);
@@ -243,8 +275,8 @@ body {
     /* Confine the particles inside a triangle roughly matching the cone */
     clip-path: polygon(40% 0, 60% 0, 100% 100%, 0% 100%);
     /* Fade out the particles smoothly towards the bottom floor */
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
+    mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
 }
 
 @keyframes particlesDrift {
@@ -262,38 +294,39 @@ body {
 .hero-pill-cta {
     display: inline-block;
     padding: 1rem 2.5rem;
-    background: linear-gradient(135deg, var(--accent-color) 0%, #00ccff 100%);
-    color: #000;
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-secondary) 100%);
+    color: var(--black);
     text-decoration: none;
     font-weight: 800;
     font-size: 0.85rem;
     border-radius: 50px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    box-shadow: 0 10px 40px rgba(0, 255, 204, 0.3);
-    transition: var(--transition-smooth);
+    box-shadow: 0 10px 40px var(--accent-glow-md);
+    transition: color 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
 }
 
 .hero-pill-cta:hover {
-    transform: scale(1.05);
-    color: #fff !important;
-    box-shadow: 0 15px 50px rgba(0, 255, 204, 0.5);
+    color: var(--text-color) !important;
+    box-shadow: 0 15px 50px var(--accent-glow-lg);
+    filter: brightness(1.1);
 }
 
 /* Sections Below */
-.about, .projects, .contact { padding: 5rem 0; }
-/* .projects, .contact { padding: 5rem 0; } */
-.section-title { font-size: 3rem; font-weight: 800; margin-top: 0; margin-bottom: 2rem; }
-.about { 
-    position: relative;
-    z-index: 2;
-    border-radius: 32px 32px 32px;
-    box-shadow: 0 -30px 80px rgba(0,0,0,0.8);
-    background: var(--secondary-color); 
+/* section padding unified below */
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-top: 0;
+    margin-bottom: 2rem;
+}
+.about {
+    background: var(--secondary-color);
     min-height: 100vh;
+    padding: 5rem 0;
     display: flex;
     align-items: center;
-    padding: 64px 0 3rem;
 }
 .about-grid { 
     display: grid; 
@@ -309,7 +342,7 @@ body {
     object-fit: cover;
     border-radius: 20px;
     border: 3px solid var(--glass-border);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    box-shadow: 0 30px 60px var(--shadow-black-04);
 }
 
 .about-content {
@@ -333,36 +366,387 @@ body {
 .stat-item h3 { font-size: 3rem; color: var(--accent-color); margin-bottom: 0.5rem; }
 .stat-item p { text-transform: uppercase; font-weight: 700; font-size: 0.8rem; opacity: 0.6; letter-spacing: 1px; }
 
-.project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-.project-card { height: 400px; background: #1a1a1a; border-radius: 15px; overflow: hidden; position: relative; }
-.project-img-wrapper { width: 100%; height: 100%; background-color: #222; transition: var(--transition-smooth); }
-.project-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 2rem; background: linear-gradient(transparent, rgba(0,0,0,0.8)); }
+
+
+/* ── Section wrapper ── */
+.projects {
+    padding: 5rem 0;
+    position: relative;
+}
+
+/* ── Vertical stacked list of cards ── */
+.project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+/* ── Individual Card ── */
+.proj-card {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 3rem;
+    align-items: center;
+
+    background: var(--secondary-color);
+    border: 1px solid var(--accent-border-xs);
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Corner accent line */
+.proj-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 80px; height: 3px;
+    background: linear-gradient(90deg, var(--accent-color), transparent);
+    border-radius: 0 0 4px 0;
+    transition: width 0.4s ease;
+}
+
+.proj-card:hover {
+    border-color: var(--accent-border-md);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px var(--accent-glow-sm);
+}
+
+.proj-card:hover::before {
+    width: 140px;
+}
+
+/* ── LEFT: Project Info ── */
+.proj-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.proj-number {
+    font-family: 'Outfit', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--accent-border-sm);
+    letter-spacing: -2px;
+    margin-bottom: -0.5rem;
+}
+
+.proj-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-color);
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin: 0;
+}
+
+/* ── Framework Badges ── */
+.proj-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.proj-badge {
+    display: inline-block;
+    padding: 0.25rem 0.85rem;
+    border-radius: 100px;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
+    color: var(--accent-color);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--accent-color) 6%, transparent);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.proj-card:hover .proj-badge {
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 70%, transparent);
+}
+
+/* ── Description ── */
+.proj-desc {
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ── CTA Link ── */
+.proj-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--accent-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    margin-top: 0.3rem;
+    width: fit-content;
+    padding-bottom: 2px;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent);
+    transition: gap 0.3s ease, border-color 0.3s ease;
+}
+
+.proj-link:hover {
+    gap: 0.8rem;
+    border-color: var(--accent-color);
+}
+
+.proj-link-arrow {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.proj-link:hover .proj-link-arrow {
+    transform: translateX(4px);
+}
+
+/* ── RIGHT: Images — horizontal compact layout ── */
+.proj-images {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-rows: 122px 122px;   /* (250 - 6px gap) / 2 = 122px each */
+    gap: 6px;
+    height: 250px;
+    overflow: hidden;
+}
+
+/* Main large image spans both rows on the left */
+.proj-img-main {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    height: 250px;        /* same as parent — fills both rows + gap */
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.proj-img-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    position: absolute;
+    inset: 0;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.proj-card:hover .proj-img-main img {
+    transform: scale(1.04);
+}
+
+/* Shine overlay on hover */
+.proj-img-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        105deg,
+        transparent 40%,
+        var(--accent-tint-07) 50%,
+        transparent 60%
+    );
+    background-size: 250% 250%;
+    background-position: 200% 200%;
+    transition: background-position 0.6s ease;
+    z-index: 1;
+}
+
+.proj-card:hover .proj-img-shine {
+    background-position: -50% -50%;
+}
+
+/* Two thumbnail images stacked vertically on the right column */
+.proj-img-row {
+    display: contents;  /* let thumbs slot directly into the grid */
+}
+
+.proj-img-thumb {
+    grid-column: 2;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative; /* needed for absolute img inside */
+}
+
+.proj-img-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    position: absolute;
+    inset: 0;
+    transition: transform 0.6s ease, filter 0.4s ease;
+    filter: brightness(0.75);
+}
+
+.proj-card:hover .proj-img-thumb img {
+    transform: scale(1.06);
+    filter: brightness(1);
+}
+
+/* ── Unified Reveal Animation ── */
+.proj-card.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.proj-card.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger project cards */
+.proj-card.reveal:nth-child(1) { transition-delay: 0s; }
+.proj-card.reveal:nth-child(2) { transition-delay: 0.12s; }
+.proj-card.reveal:nth-child(3) { transition-delay: 0.24s; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .proj-card {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .proj-images {
+        order: -1; /* Images on top on mobile */
+        height: 260px;
+        grid-template-rows: 127px 127px;
+    }
+
+    .proj-number {
+        font-size: 2.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .proj-title {
+        font-size: 1.4rem;
+    }
+
+    .proj-images {
+        height: 200px;
+        grid-template-rows: 97px 97px;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 0.4rem;
+    }
+}
+
+.contact {
+    min-height: 100vh;
+    padding: 5rem 0;
+    display: flex;
+    align-items: center;
+}
+
 .contact-form { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
 .contact-form input, .contact-form textarea { padding: 1.2rem; background: var(--secondary-color); border: 1px solid var(--glass-border); color: #fff; border-radius: 5px; }
-.cta-button { background: var(--accent-color); color: #000; padding: 1rem; border-radius: 50px; font-weight: 700; text-transform: uppercase; }
+.cta-button { background: var(--accent-color); color: var(--black); padding: 1rem; border-radius: 50px; font-weight: 700; text-transform: uppercase; }
 
-/* Reveal Animation */
-.reveal { opacity: 0; transform: translateY(30px); transition: var(--transition-smooth); }
-.reveal.active { opacity: 1; transform: translateY(0); }
+/* ── Reveal Animation — base ── */
+.reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger timeline items */
+.timeline-item.reveal:nth-child(1) { transition-delay: 0s; }
+.timeline-item.reveal:nth-child(2) { transition-delay: 0.15s; }
+.timeline-item.reveal:nth-child(3) { transition-delay: 0.3s; }
+
+/* Section title slightly faster */
+.section-title.reveal {
+    transition-delay: 0s;
+}
 
 /* Footer */
-footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align: center; }
-.social-links { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; }
-.social-links a { opacity: 0.6; color: #fff; text-decoration: none; }
+/* ── Footer ── */
+footer {
+    padding: 3rem 0 2rem;
+    border-top: 1px solid var(--glass-border-subtle);
+    text-align: center;
+}
 
+.footer-social {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-social-link {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    color: rgba(255,255,255,0.5);
+    transition: color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-social-link svg {
+    width: 18px;
+    height: 18px;
+}
+
+.footer-social-link:hover {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    transform: translateY(-3px);
+}
+
+.footer-quote {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.35);
+    font-style: italic;
+    letter-spacing: 0.03em;
+    margin-bottom: 1rem;
+}
+
+.footer-copy {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
 
 /* --- Skills Ticker Tape --- */
 .ticker-wrap {
     width: 100%;
     overflow: hidden;
     background: var(--accent-color);
-    color: #000;
+    color: var(--black);
     padding: 12px 0;
     margin-top: 2rem;
     border-radius: 12px;
     display: flex;
     white-space: nowrap;
-    box-shadow: 0 5px 20px rgba(0, 255, 204, 0.2);
+    box-shadow: 0 5px 20px var(--accent-border-sm);
 }
 
 .ticker-track {
@@ -394,17 +778,17 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
     width: 24px;
     height: 24px;
     margin-right: 10px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--black) 20%, transparent));
 }
 
 .ticker-separator {
     font-size: 1.2rem;
-    color: rgba(0, 0, 0, 0.4);
+    color: color-mix(in srgb, var(--black) 40%, transparent);
 }
 
 /* --- Experience Page Section (Vertical Timeline) --- */
 .experience {
-    background: #0d0d0d;
+    background: var(--bg-deep);
     position: relative;
     padding: 5rem 0;
 }
@@ -425,7 +809,7 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
     content: '';
     position: absolute;
     width: 2px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--glass-bg);
     top: 0;
     bottom: 0;
     left: 50%;
@@ -473,7 +857,7 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
     top: 30px; /* Align with top of card */
     border-radius: 50%;
     z-index: 1;
-    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    box-shadow: 0 0 15px var(--accent-glow-lg);
 }
 
 .timeline-item.right .timeline-dot {
@@ -503,22 +887,43 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
 
 /* Ensure content sits right next to the padding */
 .timeline-content {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--secondary-color);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 12%, transparent);
     border-radius: 20px;
     padding: 2.5rem;
     backdrop-filter: blur(25px);
-    transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 20px 40px color-mix(in srgb, var(--black) 30%, transparent);
     position: relative;
     z-index: 2;
+    overflow: hidden;
+}
+
+/* Corner accent line — sama persis dengan .proj-card::before */
+.timeline-content::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 80px; height: 3px;
+    background: linear-gradient(90deg, var(--accent-color), transparent);
+    border-radius: 0 0 4px 0;
+    transition: width 0.4s ease;
 }
 
 .timeline-content:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-    border-color: rgba(0, 255, 204, 0.3);
-    transform: translateY(-5px);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 204, 0.1);
+    border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px color-mix(in srgb, var(--accent-color) 8%, transparent);
+}
+
+.timeline-content:hover::before {
+    width: 140px;
+}
+
+/* Saat card di-hover, skill pills ikut beranimasi — sama seperti proj-card:hover .proj-badge */
+.timeline-content:hover .skill-pill {
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 70%, transparent);
 }
 
 /* Card internals */
@@ -535,13 +940,13 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
     min-width: 80px;
     min-height: 80px;
     flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--surface-white-05);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0.5rem;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid var(--glass-border);
 }
 
 .exp-image-mini img {
@@ -553,7 +958,7 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
 .exp-title { 
     font-size: 1.5rem; 
     font-weight: 800; 
-    color: #fff; 
+    color: var(--text-color); 
     margin-bottom: 0.2rem; 
     letter-spacing: -0.5px;
     line-height: 1.2;
@@ -579,20 +984,20 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
 .skills-mini { display: flex; flex-wrap: wrap; gap: 0.8rem; }
 .skill-pill { 
     padding: 0.5rem 1rem; 
-    background: rgba(255,255,255,0.03); 
-    border: 1px solid rgba(255,255,255,0.1); 
-    border-radius: 8px; 
-    font-size: 0.8rem; 
-    font-weight: 700; 
-    color: #fff;
-    transition: all 0.3s ease;
+    background: color-mix(in srgb, var(--accent-color) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent);
+    border-radius: 100px; 
+    font-size: 0.72rem; 
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .skill-pill:hover {
-    background: var(--accent-color);
-    color: #000;
-    border-color: var(--accent-color);
-    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 70%, transparent);
 }
 
 .coming-soon { min-height: 250px; display: flex; align-items: center; justify-content: flex-start;}
@@ -650,9 +1055,8 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
 
     /* About */
     .about {
-        padding: 3rem 0 2rem;
+        padding: 4rem 0 2.5rem;
         align-items: flex-start;
-        /* Let content grow beyond 100vh — critical for ticker visibility */
         height: auto !important;
         min-height: 100vh;
     }
@@ -768,10 +1172,11 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
     /* About */
     .section-title {
         font-size: 2rem;
+        margin-bottom: 1.5rem;
     }
 
     .about {
-        padding: 2.5rem 0 2rem;
+        padding: 3rem 0 2rem;
         height: auto !important;
     }
 
@@ -804,78 +1209,34 @@ footer { padding: 4rem 0; border-top: 1px solid var(--glass-border); text-align:
 }
 
 
-/* ── GSAP Vertical Card Stacking ───────────────────────────────────────── */
+/* ── Hero / About stacking ──────────────────────────────────────────────── */
 
-.scroll-section.vertical-section {
-    overflow: hidden;
-}
-
-/* Wrapper is the pinned 100vh window */
-.scroll-section .wrapper {
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-}
-
-.scroll-section .list {
-    height: 100%;
-    width: 100%;
+/* Wrapper scopes sticky — hero stops being sticky once wrapper ends */
+.hero-about-wrapper {
     position: relative;
 }
 
-/* Both cards sit absolutely inside the wrapper during the animation */
-.card-item {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100vh !important;
-    overflow: hidden !important;
-    transform-origin: top center;
-}
-
-.hero-cinematic.card-item {
-    background-color: var(--bg-color);
+/* Hero sticky ONLY within wrapper */
+#home {
+    position: sticky;
+    top: 0;
     z-index: 1;
-    overflow: hidden !important;
+    transform-origin: top center;
+    background-color: var(--bg-color);
 }
 
-.about.card-item {
-    background: var(--secondary-color);
+/* About slides up naturally over pinned hero */
+#about {
+    position: relative;
     z-index: 2;
-    border-radius: 24px 24px 0 0 !important;
-    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6) !important;
-    padding-top: 64px !important;
-    overflow-x: hidden !important;
-    overflow-y: hidden !important;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -20px 60px var(--shadow-black-06);
 }
 
-.about.card-item::-webkit-scrollbar { display: none; }
-
-/* After pin releases: About rejoins normal document flow */
-.about.card-item[style*="position: relative"] {
-    position: relative !important;
-    height: auto !important;
-    min-height: 100vh;
-    transform: none !important;
-    overflow-x: hidden !important;
-    overflow-y: visible !important;
-}
-
-/* On tablet/mobile: about card must grow with content */
+/* On tablet/mobile: keep ticker clipped */
 @media screen and (max-width: 900px) {
-    .about.card-item {
-        height: auto !important;
-        min-height: 100vh;
-        overflow-y: auto !important;
-    }
-
-    /* Ticker must always clip its own overflow */
     .ticker-wrap {
         overflow: hidden !important;
         max-width: 100%;
     }
 }
-

@@ -1,148 +1,126 @@
-// ── GSAP Vertical Card Stacking (Hero → About) ──────────────────────────
-gsap.registerPlugin(ScrollTrigger);
+// ── GSAP Plugins ─────────────────────────────────────────────────────────
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-// Matikan browser scroll restoration — kita handle sendiri setelah GSAP siap
+// ── Let browser handle scroll restoration natively ──────────────────────
+// Do NOT use manual scrollRestoration — browser is more reliable than JS
 if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
+    history.scrollRestoration = 'auto';
 }
 
-// Simpan scroll position sebelum page unload
-let savedScrollY = 0;
-window.addEventListener('beforeunload', () => {
-    sessionStorage.setItem('scrollY', window.scrollY);
-});
-
+// ── Main init ─────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-    const scrollSection = document.querySelector('.scroll-section.vertical-section');
-    if (!scrollSection) return;
 
-    const hero  = scrollSection.querySelector('#home');
-    const about = scrollSection.querySelector('#about');
-    if (!hero || !about) return;
+    // ── Hero → About stacking ─────────────────────────────────────────────
+    // #home  : position sticky inside .hero-about-wrapper (CSS)
+    // #about : normal flow, slides up naturally over sticky hero
+    // GSAP   : only scales hero as about approaches — zero position manipulation
+    const hero  = document.querySelector('#home');
+    const about = document.querySelector('#about');
 
-    // Selalu mulai dari yPercent: 100 — state awal yang benar
-    gsap.set(about, { yPercent: 100 });
-
-    const tl = gsap.timeline({
-        scrollTrigger: {
-            id: 'heroAboutStack',
-            trigger: scrollSection,
-            pin: true,
-            pinSpacing: true,
-            start: 'top top',
-            end: '+=100%',
-            scrub: 1,
-            invalidateOnRefresh: true,
-            onLeave: (self) => {
-                // Saat animasi selesai, scroll ke st.end persis seperti klik navbar
-                // Ini memastikan about terlihat dari posisi yang benar (full viewport)
-                gsap.to(window, {
-                    duration: 0,
-                    scrollTo: { y: self.end, autoKill: false },
-                });
-                gsap.set(hero,  { clearProps: 'all' });
-                gsap.set(about, { clearProps: 'all' });
-                about.style.position = 'relative';
-                about.style.transform = 'none';
+    if (hero && about) {
+        gsap.timeline({
+            scrollTrigger: {
+                id: 'heroScale',
+                trigger: about,
+                start: 'top bottom',   // about enters viewport
+                end: 'top top',        // about reaches top of screen
+                scrub: 1,
+                invalidateOnRefresh: true,
             },
-            onEnterBack: () => {
-                about.style.position = '';
-                about.style.transform = '';
-                gsap.set(about, { yPercent: 0 });
-                gsap.set(hero,  { scale: 0.88, borderRadius: '20px' });
-            },
-        },
-        defaults: { ease: 'none' },
-    });
+        })
+        .to(hero, { scale: 0.88, borderRadius: '20px', ease: 'none' });
 
-    tl.to(hero,  { scale: 0.88, borderRadius: '20px' })
-      .to(about, { yPercent: 0 }, '<');
-
-    // Setelah GSAP selesai kalkulasi semua (pin spacer sudah ada),
-    // restore scroll position yang tersimpan
-    ScrollTrigger.addEventListener('refresh', () => {
-        const saved = parseInt(sessionStorage.getItem('scrollY') || '0', 10);
-        if (saved > 0) {
-            window.scrollTo(0, saved);
-            sessionStorage.removeItem('scrollY');
-        }
-    }, { once: true });
-});
+        // Tab switch — just refresh, CSS handles everything else
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') ScrollTrigger.refresh();
+        });
 
 
-document.addEventListener('DOMContentLoaded', () => {
+    }
 
-    // 3D Profile Card Hover Effect
-    const bgText = document.querySelector('.hero-bg-text');
+    // ── 3D Profile Card Hover Effect ─────────────────────────────────────
     const floatingHeadWrapper = document.querySelector('.hero-image-wrapper');
-    const floatingHeadImg = document.querySelector('.hero-img-floating');
+    const floatingHeadImg     = document.querySelector('.hero-img-floating');
 
     if (floatingHeadWrapper && floatingHeadImg) {
         floatingHeadWrapper.addEventListener('mousemove', (e) => {
-            const rect = floatingHeadWrapper.getBoundingClientRect();
-            const x = e.clientX - rect.left; // x position within the element
-            const y = e.clientY - rect.top;  // y position within the element
-
-            const centerX = rect.width / 2;
+            const rect    = floatingHeadWrapper.getBoundingClientRect();
+            const centerX = rect.width  / 2;
             const centerY = rect.height / 2;
-
-            const rotateX = ((y - centerY) / centerY) * -15; // Max rotation 15deg
-            const rotateY = ((x - centerX) / centerX) * 15;
-
-            // Apply 3D rotation to the image
-            floatingHeadImg.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
-            floatingHeadImg.style.transition = 'transform 0.1s ease'; // Fast transition for smooth tracking
+            const rotateX = ((e.clientY - rect.top  - centerY) / centerY) * -15;
+            const rotateY = ((e.clientX - rect.left - centerX) / centerX) *  15;
+            floatingHeadImg.style.transform  = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05,1.05,1.05)`;
+            floatingHeadImg.style.transition = 'transform 0.1s ease';
         });
-
         floatingHeadWrapper.addEventListener('mouseleave', () => {
-            // Reset to flat when mouse leaves
-            floatingHeadImg.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-            floatingHeadImg.style.transition = 'transform 0.5s ease-out'; // Slower transition for snap back
+            floatingHeadImg.style.transform  = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+            floatingHeadImg.style.transition = 'transform 0.5s ease-out';
         });
     }
 
-    // Intersection Observer for Scroll Reveals
-    const observerOptions = {
-        threshold: 0.15
-    };
+    // ── Intersection Observer — Scroll Reveals ────────────────────────────
+    const observer = new IntersectionObserver(
+        (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }),
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.reveal, .project-card').forEach(el => observer.observe(el));
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
-    }, observerOptions);
+    // ── About Section — fade up stagger on enter ────────────────────────
+    const aboutSection = document.querySelector('#about');
+    if (aboutSection) {
+        const aboutItems = [
+            aboutSection.querySelector('.section-title'),
+            aboutSection.querySelector('.about-image'),
+            aboutSection.querySelector('.about-text'),
+            aboutSection.querySelector('.stats'),
+            aboutSection.querySelector('.ticker-wrap'),
+        ].filter(Boolean);
 
-    document.querySelectorAll('.reveal, .project-card').forEach(el => {
-        observer.observe(el);
-    });
+        gsap.set(aboutItems, { opacity: 0, y: 36 });
 
-    // Smooth Scroll — GSAP ScrollTo (aware of pinned sections)
-    gsap.registerPlugin(ScrollToPlugin);
+        const aboutObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    gsap.to(aboutItems, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.7,
+                        stagger: 0.12,
+                        ease: 'power3.out',
+                    });
+                    aboutObserver.disconnect(); // once only
+                }
+            });
+        }, { threshold: 0.1 });
 
+        aboutObserver.observe(aboutSection);
+    }
+
+    // ── Hero Load Animation ───────────────────────────────────────────────
+    const heroEl = document.querySelector('#home');
+    if (heroEl) {
+        const heroItems = [
+            heroEl.querySelector('.hero-bg-text'),
+            heroEl.querySelector('.hero-image-wrapper'),
+            heroEl.querySelector('.hero-description'),
+            heroEl.querySelector('.hero-pill-cta'),
+        ].filter(Boolean);
+
+        // Start hidden
+        gsap.set(heroItems, { opacity: 0, y: 30 });
+
+        // bg-text first, then description + CTA together
+        gsap.to(heroItems[0], { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: 0.1 });
+        gsap.to(heroItems[1], { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: 0.25 });
+        gsap.to([heroItems[2], heroItems[3]], { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', delay: 0.35 });
+    }
+
+    // ── Smooth Scroll ─────────────────────────────────────────────────────
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const target   = document.querySelector(targetId);
+            const target = document.querySelector(this.getAttribute('href'));
             if (!target) return;
-
-            if (targetId === '#about') {
-                // Get the ScrollTrigger instance for the hero→about stack
-                const st = ScrollTrigger.getById('heroAboutStack');
-                if (st) {
-                    // st.end = the exact scroll position where About is fully visible
-                    gsap.to(window, {
-                        duration: 1,
-                        scrollTo: { y: st.end, autoKill: false },
-                        ease: 'power2.inOut',
-                    });
-                    return;
-                }
-            }
-
-            // All other sections: scroll normally
             gsap.to(window, {
                 duration: 1,
                 scrollTo: { y: target, offsetY: 0, autoKill: false },
@@ -151,59 +129,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Form Feedback
+    // ── Contact Form Feedback ─────────────────────────────────────────────
     const form = document.querySelector('.contact-form');
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             const btn = form.querySelector('button');
-            const originalText = btn.innerText;
+            const orig = btn.innerText;
             btn.innerText = 'SENT! ✅';
-            setTimeout(() => {
-                btn.innerText = originalText;
-                form.reset();
-            }, 3000);
+            setTimeout(() => { btn.innerText = orig; form.reset(); }, 3000);
         });
     }
 
-    // Vertical Timeline Scroll Animation
-    const timeline = document.getElementById('experienceTimeline');
+    // ── Experience Timeline Progress Line ─────────────────────────────────
+    const timeline         = document.getElementById('experienceTimeline');
     const timelineProgress = document.getElementById('timelineProgress');
 
     if (timeline && timelineProgress) {
-        window.addEventListener('scroll', () => {
-            // Get timeline position relative to viewport
-            const rect = timeline.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-            
-            // Calculate how far we've scrolled into the timeline
-            // We want the line to start filling when the top of timeline hits middle of screen (or a bit lower)
-            // And finish filling when bottom of timeline hits middle of screen
-            const startTrigger = windowHeight * 0.6; // Start when timeline is 60% down the screen
-            const distance = startTrigger - rect.top;
-            
-            // Calculate percentage (0 to 1)
-            let percentage = distance / rect.height;
-            
-            // Clamp between 0 and 1
-            percentage = Math.max(0, Math.min(1, percentage));
-            
-            // Apply scale
+        const updateTimeline = () => {
+            const rect       = timeline.getBoundingClientRect();
+            const percentage = Math.max(0, Math.min(1, (window.innerHeight * 0.6 - rect.top) / rect.height));
             timelineProgress.style.transform = `scaleY(${percentage})`;
-            
-            // Optional: Also light up dots as the line passes them
-            const dots = timeline.querySelectorAll('.timeline-dot');
-            dots.forEach(dot => {
-                const dotRect = dot.getBoundingClientRect();
-                // If dot is above the progress line's current visual bottom
-                if (dotRect.top < rect.top + (rect.height * percentage)) {
-                    dot.style.backgroundColor = 'var(--accent-color)';
-                    dot.style.boxShadow = '0 0 20px rgba(0, 255, 204, 0.8)';
-                } else {
-                    dot.style.backgroundColor = 'var(--bg-color)';
-                    dot.style.boxShadow = '0 0 15px rgba(0, 255, 204, 0.5)';
-                }
+            timeline.querySelectorAll('.timeline-dot').forEach(dot => {
+                const passed = dot.getBoundingClientRect().top < rect.top + (rect.height * percentage);
+                dot.style.backgroundColor = passed ? 'var(--accent-color)' : 'var(--bg-color)';
+                dot.style.boxShadow       = passed ? '0 0 20px var(--accent-glow-lg)' : '0 0 15px var(--accent-glow-lg)';
             });
-        });
+        };
+        window.addEventListener('scroll', updateTimeline, { passive: true });
     }
 });
