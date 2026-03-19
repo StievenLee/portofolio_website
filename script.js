@@ -58,43 +58,43 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── Intersection Observer — Scroll Reveals ────────────────────────────
-    const observer = new IntersectionObserver(
-        (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); }),
-        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-    );
-    document.querySelectorAll('.reveal, .project-card').forEach(el => observer.observe(el));
+    // ── Universal Section Reveal — GSAP ScrollTrigger stagger ────────────
+    // One consistent system for ALL sections: fade + slide-up with stagger.
+    const sectionAnimations = [
+        ['#about',      ['.section-title', '.about-image', '.about-text', '.stats', '.ticker-wrap']],
+        ['#experience', ['.section-title', '.timeline-item']],
+        ['#education',  ['.section-title', '.edu-card']],
+        ['#projects',   ['.section-title', '.proj-card']],
+        ['#contact',    ['.contact-anim-item']],
+    ];
 
-    // ── About Section — fade up stagger on enter ────────────────────────
-    const aboutSection = document.querySelector('#about');
-    if (aboutSection) {
-        const aboutItems = [
-            aboutSection.querySelector('.section-title'),
-            aboutSection.querySelector('.about-image'),
-            aboutSection.querySelector('.about-text'),
-            aboutSection.querySelector('.stats'),
-            aboutSection.querySelector('.ticker-wrap'),
-        ].filter(Boolean);
+    sectionAnimations.forEach(([selector, children]) => {
+        const section = document.querySelector(selector);
+        if (!section) return;
 
-        gsap.set(aboutItems, { opacity: 0, y: 36 });
+        const items = children
+            .flatMap(sel => [...section.querySelectorAll(sel)])
+            .filter(Boolean);
 
-        const aboutObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    gsap.to(aboutItems, {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.7,
-                        stagger: 0.12,
-                        ease: 'power3.out',
-                    });
-                    aboutObserver.disconnect(); // once only
-                }
-            });
-        }, { threshold: 0.1 });
+        if (!items.length) return;
 
-        aboutObserver.observe(aboutSection);
-    }
+        gsap.set(items, { opacity: 0, y: 36 });
+
+        ScrollTrigger.create({
+            trigger: section,
+            start: 'top 82%',
+            once: true,
+            onEnter: () => {
+                gsap.to(items, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.65,
+                    stagger: 0.11,
+                    ease: 'power3.out',
+                });
+            },
+        });
+    });
 
     // ── Hero Load Animation ───────────────────────────────────────────────
     const heroEl = document.querySelector('#home');
