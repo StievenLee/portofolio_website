@@ -129,15 +129,201 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ── Contact Form Feedback ─────────────────────────────────────────────
+    // ── Input Sanitasi ────────────────────────────────────────────────────
+    // Strip HTML tags, script injections, and dangerous characters
+    function sanitize(str) {
+        return str
+            .replace(/<[^>]*>/g, '')           // strip HTML tags
+            .replace(/[<>"'`]/g, '')           // strip dangerous chars
+            .replace(/javascript:/gi, '')      // strip js: protocol
+            .replace(/on\w+\s*=/gi, '')        // strip event handlers (onclick=, etc)
+            .trim();
+    }
+
+    // ── Email Validation ──────────────────────────────────────────────────
+    const KNOWN_DOMAINS = new Set([
+        'gmail.com','googlemail.com',
+        'yahoo.com','yahoo.co.id','yahoo.co.uk','yahoo.com.au','yahoo.co.jp',
+        'yahoo.com.sg','yahoo.co.in','ymail.com','rocketmail.com',
+        'outlook.com','hotmail.com','hotmail.co.id','hotmail.co.uk',
+        'live.com','live.co.id','msn.com','windowslive.com',
+        'icloud.com','me.com','mac.com',
+        'protonmail.com','proton.me',
+        'zoho.com','aol.com','mail.com','gmx.com','gmx.net',
+        'tutanota.com','fastmail.com','hey.com',
+        // Singapore
+        'singnet.com.sg','starhub.com.sg','pacific.net.sg','m1.com.sg',
+        // Japan
+        'docomo.ne.jp','softbank.jp','ezweb.ne.jp',
+        // Australia
+        'bigpond.com','optusnet.com.au',
+        // India
+        'rediffmail.com','sify.com',
+        // Indonesia edu/corp
+        'binus.ac.id','bca.co.id','ui.ac.id','its.ac.id',
+        'ugm.ac.id','itb.ac.id','unpad.ac.id','undip.ac.id',
+    ]);
+
+    function validateEmail(email) {
+        const formatOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+        if (!formatOk) return { valid: false, msg: 'Format email tidak valid. Contoh: nama@gmail.com' };
+
+        const domain = email.split('@')[1].toLowerCase();
+
+        const typoMap = {
+            'gmai.com':'gmail.com','gmial.com':'gmail.com','gmal.com':'gmail.com',
+            'gamil.com':'gmail.com','gnail.com':'gmail.com','gmail.co':'gmail.com',
+            'yaho.com':'yahoo.com','yahooo.com':'yahoo.com',
+            'hotmai.com':'hotmail.com','hotmial.com':'hotmail.com',
+            'outloo.com':'outlook.com','outlok.com':'outlook.com',
+        };
+        if (typoMap[domain]) {
+            return { valid: false, msg: `Maksud kamu ${typoMap[domain]}? Periksa kembali emailmu.` };
+        }
+
+        if (!KNOWN_DOMAINS.has(domain)) {
+            return { valid: true, warn: true, msg: `Domain "${domain}" tidak umum. Pastikan emailmu benar.` };
+        }
+
+        return { valid: true };
+    }
+
+    function setFieldError(input, msg) {
+        clearFieldError(input);
+        input.classList.add('input-error');
+        const err = document.createElement('span');
+        err.className = 'input-error-msg';
+        err.textContent = msg;
+        input.parentNode.appendChild(err);
+    }
+
+    function setFieldWarn(input, msg) {
+        clearFieldError(input);
+        input.classList.add('input-warn');
+        const warn = document.createElement('span');
+        warn.className = 'input-warn-msg';
+        warn.textContent = msg;
+        input.parentNode.appendChild(warn);
+    }
+
+    function clearFieldError(input) {
+        input.classList.remove('input-error', 'input-warn');
+        const existing = input.parentNode.querySelector('.input-error-msg, .input-warn-msg');
+        if (existing) existing.remove();
+    }
+
+    // Live validation on blur
+    const emailInput = document.querySelector('.contact-form input[type="email"]');
+    if (emailInput) {
+        emailInput.addEventListener('blur', () => {
+            if (!emailInput.value.trim()) return clearFieldError(emailInput);
+            const result = validateEmail(emailInput.value.trim());
+            if (!result.valid)    setFieldError(emailInput, result.msg);
+            else if (result.warn) setFieldWarn(emailInput, result.msg);
+            else                  clearFieldError(emailInput);
+        });
+        emailInput.addEventListener('input', () => clearFieldError(emailInput));
+    }
+
+    // ── Toast Notification ────────────────────────────────────────────────
+    function showToast(message, type = 'success') {
+        const existing = document.querySelector('.form-toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = `form-toast form-toast--${type}`;
+        toast.innerHTML = `
+            <span class="form-toast-icon">${type === 'success' ? '✅' : '❌'}</span>
+            <span class="form-toast-msg">${message}</span>
+        `;
+        document.body.appendChild(toast);
+
+        requestAnimationFrame(() => toast.classList.add('form-toast--show'));
+        setTimeout(() => {
+            toast.classList.remove('form-toast--show');
+            setTimeout(() => toast.remove(), 400);
+        }, 4500);
+    }
+
+    // ── Contact Form — Honeypot + Sanitasi + Formspree AJAX + WIB ────────
     const form = document.querySelector('.contact-form');
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = form.querySelector('button');
-            const orig = btn.innerText;
-            btn.innerText = 'SENT! ✅';
-            setTimeout(() => { btn.innerText = orig; form.reset(); }, 3000);
+
+            // ① Honeypot check — bot akan isi field ini, manusia tidak
+            const honeypot = form.querySelector('#website_url');
+            if (honeypot && honeypot.value.trim() !== '') {
+                // Pura-pura sukses agar bot tidak tahu terdeteksi
+                showToast('Pesan berhasil terkirim! Saya akan segera menghubungi kamu. 🚀', 'success');
+                form.reset();
+                return;
+            }
+
+            // ② Validasi email
+            const emailVal = emailInput ? emailInput.value.trim() : '';
+            const result   = validateEmail(emailVal);
+            if (!result.valid) {
+                setFieldError(emailInput, result.msg);
+                emailInput.focus();
+                return;
+            }
+            if (result.warn) setFieldWarn(emailInput, result.msg);
+
+            const btn  = form.querySelector('button');
+            const span = btn.querySelector('span');
+            const orig = span.innerText;
+
+            // ③ Sanitasi semua input sebelum kirim
+            const formData = new FormData(form);
+            const cleanData = new FormData();
+            for (const [key, value] of formData.entries()) {
+                cleanData.append(key, typeof value === 'string' ? sanitize(value) : value);
+            }
+
+            // ④ Inject WIB timestamp
+            const wibInput = document.getElementById('wib-timestamp');
+            if (wibInput) {
+                const now      = new Date();
+                const datePart = new Intl.DateTimeFormat('id-ID', {
+                    timeZone: 'Asia/Jakarta',
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                }).format(now);
+                const timePart = new Intl.DateTimeFormat('id-ID', {
+                    timeZone: 'Asia/Jakarta',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+                }).format(now);
+                cleanData.set('Waktu (WIB)', `${datePart} • ${timePart} WIB`);
+            }
+
+            btn.disabled   = true;
+            span.innerText = 'Sending...';
+
+            try {
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    body: cleanData,
+                    headers: { 'Accept': 'application/json' },
+                });
+
+                if (res.ok) {
+                    span.innerText = 'SENT! ✅';
+                    form.reset();
+                    if (emailInput) clearFieldError(emailInput);
+                    showToast('Pesan berhasil terkirim! Saya akan segera menghubungi kamu. 🚀', 'success');
+                } else {
+                    span.innerText = 'Failed ❌';
+                    showToast('Gagal mengirim pesan. Silakan coba lagi.', 'error');
+                }
+            } catch {
+                span.innerText = 'Error ❌';
+                showToast('Koneksi bermasalah. Periksa internet kamu.', 'error');
+            }
+
+            setTimeout(() => {
+                span.innerText = orig;
+                btn.disabled   = false;
+            }, 3500);
         });
     }
 
