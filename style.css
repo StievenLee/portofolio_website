@@ -1261,14 +1261,14 @@ footer {
 }
 
 /* --- Experience Page Section (Vertical Timeline) --- */
-.experience {
+.achievement {
     background: var(--bg-deep);
     position: relative;
     padding: 6rem 0 7rem;
     overflow: hidden;
 }
 
-.experience::before {
+.achievement::before {
     content: '';
     position: absolute;
     top: 50%;

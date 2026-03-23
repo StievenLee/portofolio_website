@@ -62,7 +62,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // One consistent system for ALL sections: fade + slide-up with stagger.
     const sectionAnimations = [
         ['#about',      ['.section-title', '.about-image', '.about-text', '.stats', '.ticker-wrap']],
-        ['#experience', ['.section-title', '.timeline-item']],
+        ['#achievement', ['.section-title', '.timeline-item']],
         ['#education',  ['.section-title', '.edu-card']],
         ['#projects',   ['.section-title', '.proj-card']],
         ['#contact',    ['.contact-anim-item']],
@@ -327,8 +327,8 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── Experience Timeline Progress Line ─────────────────────────────────
-    const timeline         = document.getElementById('experienceTimeline');
+    // ── Achievement Timeline Progress Line ─────────────────────────────────
+    const timeline         = document.getElementById('achievementTimeline');
     const timelineProgress = document.getElementById('timelineProgress');
 
     if (timeline && timelineProgress) {
