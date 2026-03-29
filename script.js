@@ -117,6 +117,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // ── Smooth Scroll ─────────────────────────────────────────────────────
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        if (anchor.id === 'email-link') return; // skip email link
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
@@ -326,6 +327,21 @@ window.addEventListener('DOMContentLoaded', () => {
             }, 3500);
         });
     }
+
+    // ── Email Obfuscation — aman dari bot, tetap tampil di browser ──────────
+    (function () {
+        const u = 'stievenlee0';
+        const d = 'gmail' + '.' + 'com';
+        const email = u + '@' + d;
+
+        // Tampilkan teks email
+        const display = document.getElementById('email-display');
+        if (display) display.textContent = email;
+
+        // Set href link ke Gmail Compose
+        const link = document.getElementById('email-link');
+        if (link) link.href = 'https://mail.google.com/mail/?view=cm&to=' + email;
+    })();
 
     // ── Achievement Timeline Progress Line ─────────────────────────────────
     const timeline         = document.getElementById('achievementTimeline');
